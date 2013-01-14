@@ -1,0 +1,8 @@
+# /etc/profile: system-wide .profile file for the Bourne shells
+
+echo -n "Processing /etc/profile... "
+
+alias l='ls -l'
+
+echo "done"
+echo ""

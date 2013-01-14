@@ -1,0 +1,15 @@
+#! /bin/sh
+
+mount -t proc none /proc
+mount -t sysfs none /sys
+
+# scan sys and populate dev
+/sbin/mdev -s
+
+#/bin/mkdir -m 0755 /dev/pts
+#/bin/touch /var/log/wtemp
+
+# configure network
+/sbin/ifconfig lo up
+/sbin/ifconfig eth0 192.168.1.11
+
