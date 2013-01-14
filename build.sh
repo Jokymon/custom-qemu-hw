@@ -50,7 +50,7 @@ function show_info()
 	echo -n "CROSS_COMPILE       "; show_exe_exists ${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc ; echo " = ${CROSS_COMPILE}gcc"
 	echo ""
 	echo -n "QEMU                "; show_exe_exists ${PREFIX}/bin/qemu-system-${ARCH}; echo " = qemu-system-${ARCH}"
-	echo -n "LINUX               "; show_exe_exists ${PREFIX}/zImage ; echo " = zImage"
+	echo -n "LINUX (versatile)   "; show_exe_exists ${PREFIX}/zImage-versatile ; echo " = zImage-versatile"
 	echo ""
 }
 
@@ -118,7 +118,7 @@ function build_qemu()
 	fi
 }
 
-function build_kernel()
+function build_kernel_versatile()
 {
 	prepare_build
 	prepare_prefix
@@ -137,7 +137,7 @@ function build_kernel()
 		die "cannot unpack linux sources"
 	fi
 
-	cp ${SCRIPT_PATH}/kernel/config ${BUILD}/linux-2.6.38/.config
+	cp ${SCRIPT_PATH}/kernel/config-versatile ${BUILD}/linux-2.6.38/.config
 	if [ $? -ne 0 ] ; then
 		die "cannot copy kernel configuration"
 	fi
@@ -148,7 +148,7 @@ function build_kernel()
 		die "cannot build kernel"
 	fi
 
-	cp arch/arm/boot/zImage ${PREFIX}
+	cp arch/arm/boot/zImage ${PREFIX}/zImage-versatile
 	if [ $? -ne 0 ] ; then
 		die "cannot copy kernel to ${PREFIX}"
 	fi
@@ -210,7 +210,7 @@ if [ $# -eq 0 ] ; then
 	echo "  info"
 	echo "  toolchain"
 	echo "  qemu"
-	echo "  kernel"
+	echo "  kernel-versatile"
 	echo "  busybox"
 	echo "  clean"
 	echo ""
@@ -230,8 +230,8 @@ case $1 in
 		build_qemu
 		;;
 
-	kernel)
-		build_kernel
+	kernel-versatile)
+		build_kernel_versatile
 		;;
 
 	busybox)

@@ -21,28 +21,28 @@ case $1 in
 	cpio)
 		${QEMU} \
 			-M versatilepb \
-			-kernel ${PREFIX}/zImage \
+			-kernel ${PREFIX}/zImage-versatile \
 			-initrd rootfs/cpio/rootfs \
 			-append "root=/dev/ram rdinit=/test"
 		;;
 	ext2)
 		${QEMU} \
 			-M versatilepb \
-			-kernel ${PREFIX}/zImage \
+			-kernel ${PREFIX}/zImage-versatile \
 			-initrd rootfs/ext2/ramdisk \
 			-append "root=/dev/ram rootfstype=ext2 rdinit=/sbin/init"
 		;;
 	ext2-2)
 		${QEMU} \
 			-M versatilepb \
-			-kernel ${PREFIX}/zImage \
+			-kernel ${PREFIX}/zImage-versatile \
 			-initrd rootfs/ext2-2/ramdisk \
 			-append "root=/dev/ram rootfstype=ext2 rdinit=/sbin/init"
 		;;
 	busybox)
 		${QEMU} \
 			-M versatilepb \
-			-kernel ${PREFIX}/zImage \
+			-kernel ${PREFIX}/zImage-versatile \
 			-initrd rootfs/busybox/ramdisk \
 			--show-cursor \
 			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"
