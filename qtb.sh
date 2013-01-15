@@ -6,10 +6,16 @@ export PACKAGES=${PACKAGES:-${SCRIPT_PATH}/../pkg}
 export PREFIX=${PREFIX:-${SCRIPT_PATH}/local}
 export BUILD=${BUILD:-${SCRIPT_PATH}/build}
 
-export CROSS_COMPILER_PATH=${CROSS_COMPILER_PATH:-${PREFIX}/x-tools/arm-unknown-linux-uclibcgnueabi/bin}
+export TOOLCHAIN=${TOOLCHAIN:-arm-unknown-linux-uclibcgnueabi}
+export TOOLCHAIN_PATH=${TOOLCHAIN_PATH:-${PREFIX}/x-tools/${TOOLCHAIN}}
+export CROSS_COMPILER_PATH=${CROSS_COMPILER_PATH:-${TOOLCHAIN_PATH}/bin}
 export CROSS_COMPILE=${CROSS_COMPILE:-arm-linux-}
+export SYSROOT=${TOOLCHAIN_PATH}/${TOOLCHAIN}/sysroot
 
 export ARCH=${ARCH:-arm}
+
+export QEMU_PATH=${QEMU_PATH:-${PREFIX}/bin}
+export QEMU=${QEMU:-${QEMU_PATH}/qemu-system-${ARCH}}
 
 function die()
 {
@@ -47,13 +53,20 @@ function show_info()
 	echo -n "BUILD               "; show_dir_exists ${BUILD}       ; echo " = ${BUILD}"
 	echo ""
 	echo "ARCH                    = ${ARCH}"
+	echo "TOOLCHAIN               = ${TOOLCHAIN}"
 	echo ""
+	echo -n "TOOLCHAIN_PATH      "; show_dir_exists ${TOOLCHAIN_PATH} ; echo " = ${TOOLCHAIN_PATH}"
+	echo -n "SYSROOT             "; show_dir_exists ${SYSROOT}        ; echo " = ${SYSROOT}"
 	echo -n "CROSS_COMPILER_PATH "; show_dir_exists ${CROSS_COMPILER_PATH} ; echo " = ${CROSS_COMPILER_PATH}"
 	echo -n "CROSS_COMPILE       "; show_exe_exists ${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc ; echo " = ${CROSS_COMPILE}gcc"
 	echo ""
-	echo -n "QEMU                "; show_exe_exists ${PREFIX}/bin/qemu-system-${ARCH}; echo " = qemu-system-${ARCH}"
+	echo -n "QEMU_PATH           "; show_dir_exists ${QEMU_PATH}   ; echo " = ${QEMU_PATH}"
+	echo -n "QEMU                "; show_exe_exists ${QEMU}        ; echo " = ${QEMU}"
+	echo ""
 	echo -n "LINUX (versatile)   "; show_exe_exists ${PREFIX}/zImage-versatile ; echo " = zImage-versatile"
-	echo -n "LINUX (qemu-mk)     "; show_exe_exists ${PREFIX}/zImage-qemu-mk ; echo " = zImage-qemu-mk"
+	echo -n "LINUX (qemu-mk)     "; show_exe_exists ${PREFIX}/zImage-qemu-mk   ; echo " = zImage-qemu-mk"
+	echo ""
+	echo "PATH                    = ${PATH}"
 	echo ""
 }
 
@@ -66,6 +79,7 @@ if [ $# -eq 0 ] ; then
 	echo "  sh             : starts a shell (bash) with all environment variables defined"
 	echo "  build command  : invokes a build with specified command"
 	echo "  start command  : starts the qemu with specified command"
+	echo "  make target    : builds one of the targets using the built environment"
 	echo ""
 	exit 1
 fi
@@ -89,6 +103,12 @@ case $1 in
 	start)
 		shift
 		./start.sh $*
+		;;
+
+	make)
+		shift
+		export PATH=$PATH:${CROSS_COMPILER_PATH}
+		make $*
 		;;
 
 	*)

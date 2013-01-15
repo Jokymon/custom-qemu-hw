@@ -3,20 +3,8 @@
 .PHONY: check-toolchain
 .PHONY: cpio ext2 ext2-2 busybox
 
-export PREFIX=$(CURDIR)/local
-export BUILD=$(CURDIR)/build
-
-
-export TOOLCHAIN_PATH=$(PREFIX)/x-tools/arm-unknown-linux-uclibcgnueabi
-export PACKAGES=$(CURDIR)/../pkg
-
-export CROSS_COMPILE_PATH=$(TOOLCHAIN_PATH)/bin
-export CROSS_COMPILE=arm-linux-
-export ARCH=arm
-export SYSROOT=$(TOOLCHAIN_PATH)/arm-unknown-linux-uclibcgnueabi/sysroot
-
-export CC=$(CROSS_COMPILE_PATH)/$(CROSS_COMPILE)gcc
-export STRIP=$(CROSS_COMPILE_PATH)/$(CROSS_COMPILE)strip
+export CC=$(CROSS_COMPILER_PATH)/$(CROSS_COMPILE)gcc
+export STRIP=$(CROSS_COMPILER_PATH)/$(CROSS_COMPILE)strip
 
 ifeq ($(shell which arm-linux-gcc),)
   $(error Cross toolchain not in path)

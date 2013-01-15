@@ -8,9 +8,22 @@ The general usage is:
 qtb.sh command
 ```
 
+To check your environment:
+```bash
+qtb.sh info
+```
+
+If you like to change a specific variable:
+```bash
+QEMU_PATH=$HOME/qemu/bin ./qtb.sh info
+```
+
 
 BUILDING FROM SOURCE
 ====================
+
+Source packages are expected to be in the package directory. It is not implemented (yet) to
+automatically download any pacakges, they are expected to be present.
 
 TOOLCHAIN
 ---------
@@ -23,7 +36,7 @@ qtb.sh build toolchain
 
 
 BUSYBOX
-=======
+-------
 
 This requires the presence of a cross-toolchain.
 
@@ -38,7 +51,7 @@ Please note: this does build the busybox, it does not install it anywhere.
 
 
 LINUX
-=====
+-----
 
 Currently there are two kernels supported to be built by the scripts:
 - versatile
@@ -54,6 +67,21 @@ or
 
 ```bash
 qtb.sh build kernel-qemu-mk
+```
+
+
+BUILD AND START THE DEMOS
+=========================
+
+The toolbox can also be used to start the demos. After building all necessary packages
+you may build and start the examples:
+
+```bash
+qtb.sh make ext2
+```
+Then start the example:
+```bash
+qtb.sh start ext2
 ```
 
 
