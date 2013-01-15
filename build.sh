@@ -1,57 +1,11 @@
 #!/bin/bash
 
-export SCRIPT_PATH=$(dirname $(readlink -f $0))
-export PACKAGES=${PACKAGES:-${SCRIPT_PATH}/../pkg}
-export PREFIX=${PREFIX:-${SCRIPT_PATH}/local}
-export BUILD=${BUILD:-${SCRIPT_PATH}/build}
-
-export CROSS_COMPILER_PATH=${CROSS_COMPILER_PATH:-${PREFIX}/x-tools/arm-unknown-linux-uclibcgnueabi/bin}
-export CROSS_COMPILE=${CROSS_COMPILE:-arm-linux-}
-
-export ARCH=${ARCH:-arm}
-
 function die()
 {
 	echo ""
 	echo "ERROR: $1"
 	echo ""
 	exit -1
-}
-
-function show_dir_exists()
-{
-	if [ -d $1 ] ; then
-		echo -n "(E)"
-	else
-		echo -n "(N)"
-	fi
-}
-
-function show_exe_exists()
-{
-	if [ -x $1 ] ; then
-		echo -n "(E)"
-	else
-		echo -n "(N)"
-	fi
-}
-
-function show_info()
-{
-	echo ""
-	echo -n "SCRIPT_PATH         "; show_dir_exists ${SCRIPT_PATH}         ; echo " = ${SCRIPT_PATH}"
-	echo -n "PACKAGES            "; show_dir_exists ${PACKAGES}            ; echo " = ${PACKAGES}"
-	echo -n "PREFIX              "; show_dir_exists ${PREFIX}              ; echo " = ${PREFIX}"
-	echo -n "BUILD               "; show_dir_exists ${BUILD}               ; echo " = ${BUILD}"
-	echo ""
-	echo "ARCH                    = ${ARCH}"
-	echo ""
-	echo -n "CROSS_COMPILER_PATH "; show_dir_exists ${CROSS_COMPILER_PATH} ; echo " = ${CROSS_COMPILER_PATH}"
-	echo -n "CROSS_COMPILE       "; show_exe_exists ${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc ; echo " = ${CROSS_COMPILE}gcc"
-	echo ""
-	echo -n "QEMU                "; show_exe_exists ${PREFIX}/bin/qemu-system-${ARCH}; echo " = qemu-system-${ARCH}"
-	echo -n "LINUX (versatile)   "; show_exe_exists ${PREFIX}/zImage-versatile ; echo " = zImage-versatile"
-	echo ""
 }
 
 function prepare_build()
@@ -86,6 +40,8 @@ function unpack_toolchain()
 
 function build_qemu()
 {
+	# TODO:mk: qemu from which source? bbv patch or forked repository?
+
 	prepare_build
 	prepare_prefix
 
@@ -118,7 +74,7 @@ function build_qemu()
 	fi
 }
 
-function build_kernel_versatile()
+function build_kernel()
 {
 	prepare_build
 	prepare_prefix
@@ -137,7 +93,7 @@ function build_kernel_versatile()
 		die "cannot unpack linux sources"
 	fi
 
-	cp ${SCRIPT_PATH}/kernel/config-versatile ${BUILD}/linux-2.6.38/.config
+	cp ${BASE_PATH}/config/kernel-$1 ${BUILD}/linux-2.6.38/.config
 	if [ $? -ne 0 ] ; then
 		die "cannot copy kernel configuration"
 	fi
@@ -148,7 +104,7 @@ function build_kernel_versatile()
 		die "cannot build kernel"
 	fi
 
-	cp arch/arm/boot/zImage ${PREFIX}/zImage-versatile
+	cp arch/arm/boot/zImage ${PREFIX}/zImage-$1
 	if [ $? -ne 0 ] ; then
 		die "cannot copy kernel to ${PREFIX}"
 	fi
@@ -158,8 +114,6 @@ function build_busybox()
 {
 	prepare_build
 	prepare_prefix
-
-	export PATH=${CROSS_COMPILER_PATH}:${PATH}
 
 	if [ -d ${BUILD}/busybox-1.20.2 ] ; then
 		rm -fr ${BUILD}/busybox-1.20.2
@@ -207,19 +161,19 @@ if [ $# -eq 0 ] ; then
 	echo "usage: $0 command"
 	echo ""
 	echo "Commands:"
-	echo "  info"
-	echo "  toolchain"
-	echo "  qemu"
-	echo "  kernel-versatile"
-	echo "  busybox"
-	echo "  clean"
+	echo "  clean             : cleans up build and local deployment directories"
+	echo "  toolchain         : extracts the toolchain"
+	echo "  qemu              : builds standard qemu from source"
+	echo "  busybox           : builds busyboard"
+	echo "  kernel-versatile  : builds Linux kernel for the versatile board"
+	echo "  kernel-qemu-mk    : builds Linux kernel for the custom board"
 	echo ""
 	exit 1
 fi
 
 case $1 in
-	info)
-		show_info
+	clean)
+		cleanup
 		;;
 
 	toolchain)
@@ -230,16 +184,16 @@ case $1 in
 		build_qemu
 		;;
 
-	kernel-versatile)
-		build_kernel_versatile
-		;;
-
 	busybox)
 		build_busybox
 		;;
 
-	clean)
-		cleanup
+	kernel-versatile)
+		build_kernel "versatile"
+		;;
+
+	kernel-qemu-mk)
+		build_kernel "qemu-mk"
 		;;
 
 	*)
