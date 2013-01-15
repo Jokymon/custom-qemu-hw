@@ -9,6 +9,8 @@ if [ $# -ne 1 ] ; then
 	echo "  ext2"
 	echo "  ext2-2"
 	echo "  busybox"
+	echo "  cpio-mk"
+	echo "  busybox-mk"
 	echo ""
 	exit -1
 fi
@@ -21,6 +23,7 @@ case $1 in
 			-initrd ${BASE_PATH}/rootfs/cpio/rootfs \
 			-append "root=/dev/ram rdinit=/test"
 		;;
+
 	ext2)
 		${QEMU} \
 			-M versatilepb \
@@ -28,6 +31,7 @@ case $1 in
 			-initrd ${BASE_PATH}/rootfs/ext2/ramdisk \
 			-append "root=/dev/ram rootfstype=ext2 rdinit=/sbin/init"
 		;;
+
 	ext2-2)
 		${QEMU} \
 			-M versatilepb \
@@ -35,6 +39,7 @@ case $1 in
 			-initrd ${BASE_PATH}/rootfs/ext2-2/ramdisk \
 			-append "root=/dev/ram rootfstype=ext2 rdinit=/sbin/init"
 		;;
+
 	busybox)
 		${QEMU} \
 			-M versatilepb \
@@ -43,6 +48,24 @@ case $1 in
 			--show-cursor \
 			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"
 		;;
+
+	cpio-mk)
+		${QEMU} \
+			-M marioboard \
+			-kernel ${PREFIX}/zImage-qemu-mk \
+			-initrd ${BASE_PATH}/rootfs/cpio/rootfs \
+			-append "root=/dev/ram rdinit=/test"
+		;;
+
+	busybox-mk)
+		${QEMU} \
+			-M marioboard \
+			-kernel ${PREFIX}/zImage-qemu-mk \
+			-initrd ${BASE_PATH}/rootfs/busybox/ramdisk \
+			--show-cursor \
+			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"
+		;;
+
 	*)
 		echo "ERROR: unknown target: $1"
 		exit -1
