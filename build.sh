@@ -93,7 +93,7 @@ function build_kernel()
 		die "cannot unpack linux sources"
 	fi
 
-	cp ${BASE_PATH}/kernel/config-$1 ${BUILD}/linux-2.6.38/.config
+	cp ${BASE_PATH}/config/kernel-$1 ${BUILD}/linux-2.6.38/.config
 	if [ $? -ne 0 ] ; then
 		die "cannot copy kernel configuration"
 	fi
@@ -161,12 +161,12 @@ if [ $# -eq 0 ] ; then
 	echo "usage: $0 command"
 	echo ""
 	echo "Commands:"
-	echo "  clean"
-	echo "  toolchain"
-	echo "  qemu"
-	echo "  kernel-versatile"
-	echo "  kernel-qemu-mk"
-	echo "  busybox"
+	echo "  clean             : cleans up build and local deployment directories"
+	echo "  toolchain         : extracts the toolchain"
+	echo "  qemu              : builds standard qemu from source"
+	echo "  busybox           : builds busyboard"
+	echo "  kernel-versatile  : builds Linux kernel for the versatile board"
+	echo "  kernel-qemu-mk    : builds Linux kernel for the custom board"
 	echo ""
 	exit 1
 fi
@@ -184,16 +184,16 @@ case $1 in
 		build_qemu
 		;;
 
+	busybox)
+		build_busybox
+		;;
+
 	kernel-versatile)
 		build_kernel "versatile"
 		;;
 
 	kernel-qemu-mk)
 		build_kernel "qemu-mk"
-		;;
-
-	busybox)
-		build_busybox
 		;;
 
 	*)

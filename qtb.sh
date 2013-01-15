@@ -62,10 +62,10 @@ if [ $# -eq 0 ] ; then
 	echo "usage: $0 command"
 	echo ""
 	echo "Commands:"
-	echo "  info"
-	echo "  sh"
-	echo "  build command"
-	echo "  start command"
+	echo "  info           : displays information about the environment"
+	echo "  sh             : starts a shell (bash) with all environment variables defined"
+	echo "  build command  : invokes a build with specified command"
+	echo "  start command  : starts the qemu with specified command"
 	echo ""
 	exit 1
 fi
