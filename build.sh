@@ -64,7 +64,7 @@ function build_toolchain()
 		die "cannot install crosstool-ng"
 	fi
 
-	cp ${BASE_PATH}/config/ctng ${BUILD}/crosstool-ng-1.7.0/.config
+	cp ${BASE_PATH}/config/ctng ${BUILD}/crosstool-ng-1.17.0/.config
 	if [ $? -ne 0 ] ; then
 		die "cannot copy crosstool-ng configuration"
 	fi
