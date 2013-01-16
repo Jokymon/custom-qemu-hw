@@ -46,27 +46,27 @@ function show_exe_exists()
 function show_info()
 {
 	echo ""
-	echo -n "SCRIPT_PATH         "; show_dir_exists ${SCRIPT_PATH} ; echo " = ${SCRIPT_PATH}"
-	echo -n "BASE_PATH           "; show_dir_exists ${BASE_PATH}   ; echo " = ${BASE_PATH}"
-	echo -n "PACKAGES            "; show_dir_exists ${PACKAGES}    ; echo " = ${PACKAGES}"
-	echo -n "PREFIX              "; show_dir_exists ${PREFIX}      ; echo " = ${PREFIX}"
-	echo -n "BUILD               "; show_dir_exists ${BUILD}       ; echo " = ${BUILD}"
+	echo -n "SCRIPT_PATH           "; show_dir_exists ${SCRIPT_PATH} ; echo " = ${SCRIPT_PATH}"
+	echo -n "BASE_PATH             "; show_dir_exists ${BASE_PATH}   ; echo " = ${BASE_PATH}"
+	echo -n "PACKAGES              "; show_dir_exists ${PACKAGES}    ; echo " = ${PACKAGES}"
+	echo -n "PREFIX                "; show_dir_exists ${PREFIX}      ; echo " = ${PREFIX}"
+	echo -n "BUILD                 "; show_dir_exists ${BUILD}       ; echo " = ${BUILD}"
 	echo ""
-	echo "ARCH                    = ${ARCH}"
-	echo "TOOLCHAIN               = ${TOOLCHAIN}"
+	echo "ARCH                      = ${ARCH}"
+	echo "TOOLCHAIN                 = ${TOOLCHAIN}"
 	echo ""
-	echo -n "TOOLCHAIN_PATH      "; show_dir_exists ${TOOLCHAIN_PATH} ; echo " = ${TOOLCHAIN_PATH}"
-	echo -n "SYSROOT             "; show_dir_exists ${SYSROOT}        ; echo " = ${SYSROOT}"
-	echo -n "CROSS_COMPILER_PATH "; show_dir_exists ${CROSS_COMPILER_PATH} ; echo " = ${CROSS_COMPILER_PATH}"
-	echo -n "CROSS_COMPILE       "; show_exe_exists ${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc ; echo " = ${CROSS_COMPILE}gcc"
+	echo -n "TOOLCHAIN_PATH        "; show_dir_exists ${TOOLCHAIN_PATH} ; echo " = ${TOOLCHAIN_PATH}"
+	echo -n "SYSROOT               "; show_dir_exists ${SYSROOT}        ; echo " = ${SYSROOT}"
+	echo -n "CROSS_COMPILER_PATH   "; show_dir_exists ${CROSS_COMPILER_PATH} ; echo " = ${CROSS_COMPILER_PATH}"
+	echo -n "CROSS_COMPILE         "; show_exe_exists ${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc ; echo " = ${CROSS_COMPILE}gcc"
 	echo ""
-	echo -n "QEMU_PATH           "; show_dir_exists ${QEMU_PATH}   ; echo " = ${QEMU_PATH}"
-	echo -n "QEMU                "; show_exe_exists ${QEMU}        ; echo " = ${QEMU}"
+	echo -n "QEMU_PATH             "; show_dir_exists ${QEMU_PATH}   ; echo " = ${QEMU_PATH}"
+	echo -n "QEMU                  "; show_exe_exists ${QEMU}        ; echo " = ${QEMU}"
 	echo ""
-	echo -n "LINUX (versatile)   "; show_exe_exists ${PREFIX}/zImage-versatile ; echo " = zImage-versatile"
-	echo -n "LINUX (qemu-mk)     "; show_exe_exists ${PREFIX}/zImage-qemu-mk   ; echo " = zImage-qemu-mk"
+	echo -n "LINUX (versatile)     "; show_exe_exists ${PREFIX}/zImage-versatile     ; echo " = zImage-versatile"
+	echo -n "LINUX (versatile-bbv) "; show_exe_exists ${PREFIX}/zImage-versatile-bbv ; echo " = zImage-versatile-bbv"
 	echo ""
-	echo "PATH                    = ${PATH}"
+	echo "PATH                      = ${PATH}"
 	echo ""
 }
 
@@ -91,7 +91,7 @@ case $1 in
 
 	sh)
 		export PATH=$PATH:${CROSS_COMPILER_PATH}
-		/bin/bash
+		/bin/bash --rcfile bashrc.local -i
 		;;
 
 	build)
