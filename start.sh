@@ -2,7 +2,7 @@
 
 if [ $# -ne 1 ] ; then
 	echo ""
-	echo "usage: $0 demo"
+	echo "usage: $(basename $0) demo"
 	echo ""
 	echo "Demo:"
 	echo "  cpio"

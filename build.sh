@@ -195,7 +195,7 @@ function cleanup()
 
 if [ $# -eq 0 ] ; then
 	echo ""
-	echo "usage: $0 command"
+	echo "usage: $(basename $0) command"
 	echo ""
 	echo "Commands:"
 	echo "  clean                : cleans up build and local deployment directories"
