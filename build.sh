@@ -161,12 +161,12 @@ if [ $# -eq 0 ] ; then
 	echo "usage: $0 command"
 	echo ""
 	echo "Commands:"
-	echo "  clean             : cleans up build and local deployment directories"
-	echo "  toolchain         : extracts the toolchain"
-	echo "  qemu              : builds standard qemu from source"
-	echo "  busybox           : builds busyboard"
-	echo "  kernel-versatile  : builds Linux kernel for the versatile board"
-	echo "  kernel-qemu-mk    : builds Linux kernel for the custom board"
+	echo "  clean                : cleans up build and local deployment directories"
+	echo "  toolchain            : extracts the toolchain"
+	echo "  qemu                 : builds standard qemu from source"
+	echo "  busybox              : builds busyboard"
+	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
+	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
 	echo ""
 	exit 1
 fi
@@ -192,8 +192,8 @@ case $1 in
 		build_kernel "versatile"
 		;;
 
-	kernel-qemu-mk)
-		build_kernel "qemu-mk"
+	kernel-versatile-bbv)
+		build_kernel "versatile-bbv"
 		;;
 
 	*)

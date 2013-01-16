@@ -10,6 +10,6 @@ mount -t sysfs none /sys
 #/bin/touch /var/log/wtemp
 
 # configure network
-/sbin/ifconfig lo up
-/sbin/ifconfig eth0 192.168.1.11
+#/sbin/ifconfig lo up
+#/sbin/ifconfig eth0 192.168.1.11
 
