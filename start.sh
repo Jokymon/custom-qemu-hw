@@ -2,15 +2,15 @@
 
 if [ $# -ne 1 ] ; then
 	echo ""
-	echo "usage: $0 demo"
+	echo "usage: $(basename $0) demo"
 	echo ""
 	echo "Demo:"
 	echo "  cpio"
 	echo "  ext2"
 	echo "  ext2-2"
 	echo "  busybox"
-	echo "  cpio-mk"
-	echo "  busybox-mk"
+	echo "  cpio-bbv"
+	echo "  busybox-bbv"
 	echo ""
 	exit -1
 fi
@@ -49,18 +49,18 @@ case $1 in
 			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"
 		;;
 
-	cpio-mk)
+	cpio-bbv)
 		${QEMU} \
-			-M marioboard \
-			-kernel ${PREFIX}/zImage-qemu-mk \
+			-M versatile-bbv \
+			-kernel ${PREFIX}/zImage-versatile-bbv \
 			-initrd ${BASE_PATH}/rootfs/cpio/rootfs \
 			-append "root=/dev/ram rdinit=/test"
 		;;
 
-	busybox-mk)
+	busybox-bbv)
 		${QEMU} \
-			-M marioboard \
-			-kernel ${PREFIX}/zImage-qemu-mk \
+			-M versatile-bbv \
+			-kernel ${PREFIX}/zImage-versatile-bbv \
 			-initrd ${BASE_PATH}/rootfs/busybox/ramdisk \
 			--show-cursor \
 			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"

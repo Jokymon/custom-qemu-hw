@@ -38,9 +38,46 @@ function unpack_toolchain()
 	fi
 }
 
+function build_toolchain()
+{
+	prepare_build
+	prepare_prefix
+
+	tar -xjf ${PACKAGES}/crosstool-ng-1.17.0.tar.bz2 -C ${BUILD}
+	if [ $? -ne 0 ] ; then
+		die "cannot unpack crosstool-ng"
+	fi
+
+	cd ${BUILD}/crosstool-ng-1.17.0
+	./configure --enable-local
+	if [ $? -ne 0 ] ; then
+		die "cannot configure crosstool-ng"
+	fi
+
+	make
+	if [ $? -ne 0 ] ; then
+		die "cannot make crosstool-ng"
+	fi
+
+	make install
+	if [ $? -ne 0 ] ; then
+		die "cannot install crosstool-ng"
+	fi
+
+	cp ${BASE_PATH}/config/ctng ${BUILD}/crosstool-ng-1.17.0/.config
+	if [ $? -ne 0 ] ; then
+		die "cannot copy crosstool-ng configuration"
+	fi
+
+	./ct-ng build
+	if [ $? -ne 0 ] ; then
+		die "cannot build toolchain using crosstool-ng"
+	fi
+}
+
 function build_qemu()
 {
-	# TODO:mk: qemu from which source? bbv patch or forked repository?
+	# TODO:mk: qemu from which source? bbv patch or forked (submodule) repository?
 
 	prepare_build
 	prepare_prefix
@@ -158,15 +195,17 @@ function cleanup()
 
 if [ $# -eq 0 ] ; then
 	echo ""
-	echo "usage: $0 command"
+	echo "usage: $(basename $0) command"
 	echo ""
 	echo "Commands:"
-	echo "  clean             : cleans up build and local deployment directories"
-	echo "  toolchain         : extracts the toolchain"
-	echo "  qemu              : builds standard qemu from source"
-	echo "  busybox           : builds busyboard"
-	echo "  kernel-versatile  : builds Linux kernel for the versatile board"
-	echo "  kernel-qemu-mk    : builds Linux kernel for the custom board"
+	echo "  clean                : cleans up build and local deployment directories"
+	echo "  all                  : only for convenience, contains toolchain, qemu, busybox, kernel-*"
+	echo "  toolchain            : extracts the toolchain (x86 based)"
+	echo "  toolchain-scratch    : builds toolchain from scratch"
+	echo "  qemu                 : builds standard qemu from source"
+	echo "  busybox              : builds busyboard"
+	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
+	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
 	echo ""
 	exit 1
 fi
@@ -176,8 +215,20 @@ case $1 in
 		cleanup
 		;;
 
+	all)
+		unpack_toolchain
+		build_qemu
+		build_busybox
+		build_kernel "versatile"
+		build_kernel "versatile-bbv"
+		;;
+
 	toolchain)
 		unpack_toolchain
+		;;
+
+	toolchain-scratch)
+		build_toolchain
 		;;
 
 	qemu)
@@ -192,8 +243,8 @@ case $1 in
 		build_kernel "versatile"
 		;;
 
-	kernel-qemu-mk)
-		build_kernel "qemu-mk"
+	kernel-versatile-bbv)
+		build_kernel "versatile-bbv"
 		;;
 
 	*)
