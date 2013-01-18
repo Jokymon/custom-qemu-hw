@@ -1,0 +1,3 @@
+[submodule "src/qemu"]
+	path = src/qemu
+	url = git@github.com:Jokymon/qemu.git
