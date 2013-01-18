@@ -199,8 +199,25 @@ function build_busybox()
 	fi
 }
 
+function build_index()
+{
+	rm -f tags cscope.files cscope.out
+
+	if [ -d rootfs ] ; then
+		find rootfs -name "*.c" -o -name "*.h" >> cscope.files
+	fi
+	if [ -d src ] ; then
+		find src -name "*.c" -o -name "*.h" >> cscope.files
+	fi
+
+	ctags -L cscope.files
+	cscope -b
+}
+
 function cleanup()
 {
+	rm -f tags cscope.files cscope.out
+
 	if [ -d ${PREFIX}/x-tools ] ; then
 		chmod -R u+w ${PREFIX}/x-tools
 	fi
@@ -228,6 +245,7 @@ if [ $# -eq 0 ] ; then
 	echo ""
 	echo "Commands:"
 	echo "  clean                : cleans up build and local deployment directories"
+	echo "  index                : builds ctags/cscope indices"
 	echo "  all                  : only for convenience, contains toolchain, qemu, busybox, kernel-*"
 	echo "  toolchain            : extracts the toolchain (x86 based)"
 	echo "  toolchain-scratch    : builds toolchain from scratch"
@@ -279,6 +297,10 @@ case $1 in
 
 	kernel-versatile-bbv)
 		build_kernel "versatile-bbv"
+		;;
+
+	index)
+		build_index
 		;;
 
 	*)
