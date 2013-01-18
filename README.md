@@ -122,6 +122,11 @@ mechanism.
 LINKS
 =====
 
-ARM/PrimeCell documentation: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0194g/index.html
+- qemu: http://wiki.qemu.org/Main_Page
+- GNU (gcc, binutils, etc.): https://gnu.org
+- Linux: https://www.kernel.org
+- busybox: http://www.busybox.net/
+- crosstool-ng: http://crosstool-ng.org
+- ARM/PrimeCell Documentation : http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0194g/index.html
 
 
