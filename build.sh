@@ -203,9 +203,6 @@ function build_index()
 {
 	rm -f tags cscope.files cscope.out
 
-	if [ -d rootfs ] ; then
-		find rootfs -name "*.c" -o -name "*.h" >> cscope.files
-	fi
 	if [ -d src ] ; then
 		find src -name "*.c" -o -name "*.h" >> cscope.files
 	fi
@@ -222,12 +219,6 @@ function cleanup()
 		chmod -R u+w ${PREFIX}/x-tools
 	fi
 
-	if [ -d ${BASE_PATH}/src/qemu ] ; then
-		if [ -r ${BASE_PATH}/src/qemu/Makefile ] ; then
-			(cd ${BASE_PATH}/src/qemu ; make distclean)
-		fi
-	fi
-
 	rm -fr ${PREFIX}
 	if [ $? -ne 0 ] ; then
 		die "cannot remove ${PREFIX}"
@@ -236,6 +227,12 @@ function cleanup()
 	rm -fr ${BUILD}
 	if [ $? -ne 0 ] ; then
 		die "cannot remove ${BUILD}"
+	fi
+
+	if [ -d ${BASE_PATH}/src/qemu ] ; then
+		if [ -r ${BASE_PATH}/src/qemu/Makefile ] ; then
+			(cd ${BASE_PATH}/src/qemu ; make distclean)
+		fi
 	fi
 }
 

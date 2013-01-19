@@ -11,26 +11,26 @@ ifeq ($(shell which arm-linux-gcc),)
 endif
 
 all :
-	$(MAKE) -C rootfs/cpio
-	$(MAKE) -C rootfs/ext2
-	$(MAKE) -C rootfs/ext2-2
-	$(MAKE) -C rootfs/busybox
+	$(MAKE) -C src/rootfs/cpio
+	$(MAKE) -C src/rootfs/ext2
+	$(MAKE) -C src/rootfs/ext2-2
+	$(MAKE) -C src/rootfs/busybox
 
 cpio :
-	$(MAKE) -C rootfs/cpio
+	$(MAKE) -C src/rootfs/cpio
 
 ext2 :
-	$(MAKE) -C rootfs/ext2
+	$(MAKE) -C src/rootfs/ext2
 
 ext2-2 :
-	$(MAKE) -C rootfs/ext2-2
+	$(MAKE) -C src/rootfs/ext2-2
 
 busybox :
-	$(MAKE) -C rootfs/busybox
+	$(MAKE) -C src/rootfs/busybox
 
 clean :
-	$(MAKE) -C rootfs/cpio clean
-	$(MAKE) -C rootfs/ext2 clean
-	$(MAKE) -C rootfs/ext2-2 clean
-	$(MAKE) -C rootfs/busybox clean
+	$(MAKE) -C src/rootfs/cpio clean
+	$(MAKE) -C src/rootfs/ext2 clean
+	$(MAKE) -C src/rootfs/ext2-2 clean
+	$(MAKE) -C src/rootfs/busybox clean
 

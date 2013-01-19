@@ -20,7 +20,7 @@ case $1 in
 		${QEMU} \
 			-M versatilepb \
 			-kernel ${PREFIX}/zImage-versatile \
-			-initrd ${BASE_PATH}/rootfs/cpio/rootfs \
+			-initrd ${SRC_PATH}/rootfs/cpio/rootfs \
 			-append "root=/dev/ram rdinit=/test"
 		;;
 
@@ -28,7 +28,7 @@ case $1 in
 		${QEMU} \
 			-M versatilepb \
 			-kernel ${PREFIX}/zImage-versatile \
-			-initrd ${BASE_PATH}/rootfs/ext2/ramdisk \
+			-initrd ${SRC_PATH}/rootfs/ext2/ramdisk \
 			-append "root=/dev/ram rootfstype=ext2 rdinit=/sbin/init"
 		;;
 
@@ -36,7 +36,7 @@ case $1 in
 		${QEMU} \
 			-M versatilepb \
 			-kernel ${PREFIX}/zImage-versatile \
-			-initrd ${BASE_PATH}/rootfs/ext2-2/ramdisk \
+			-initrd ${SRC_PATH}/rootfs/ext2-2/ramdisk \
 			-append "root=/dev/ram rootfstype=ext2 rdinit=/sbin/init"
 		;;
 
@@ -44,7 +44,7 @@ case $1 in
 		${QEMU} \
 			-M versatilepb \
 			-kernel ${PREFIX}/zImage-versatile \
-			-initrd ${BASE_PATH}/rootfs/busybox/ramdisk \
+			-initrd ${SRC_PATH}/rootfs/busybox/ramdisk \
 			--show-cursor \
 			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"
 		;;
@@ -53,7 +53,7 @@ case $1 in
 		${QEMU} \
 			-M versatile-bbv \
 			-kernel ${PREFIX}/zImage-versatile-bbv \
-			-initrd ${BASE_PATH}/rootfs/cpio/rootfs \
+			-initrd ${SRC_PATH}/rootfs/cpio/rootfs \
 			-append "root=/dev/ram rdinit=/test"
 		;;
 
@@ -61,7 +61,7 @@ case $1 in
 		${QEMU} \
 			-M versatile-bbv \
 			-kernel ${PREFIX}/zImage-versatile-bbv \
-			-initrd ${BASE_PATH}/rootfs/busybox/ramdisk \
+			-initrd ${SRC_PATH}/rootfs/busybox/ramdisk \
 			--show-cursor \
 			-append "root=/dev/ram rw ramdisk_size=8192 rootfstype=ext2 init=/sbin/init"
 		;;
