@@ -40,15 +40,17 @@ function unpack_toolchain()
 
 function build_toolchain()
 {
+	export CROSSTOOL_VERSION=crosstool-ng-1.17.0
+
 	prepare_build
 	prepare_prefix
 
-	tar -xjf ${PACKAGES}/crosstool-ng-1.17.0.tar.bz2 -C ${BUILD}
+	tar -xjf ${PACKAGES}/${CROSSTOOL_VERSION}.tar.bz2 -C ${BUILD}
 	if [ $? -ne 0 ] ; then
 		die "cannot unpack crosstool-ng"
 	fi
 
-	cd ${BUILD}/crosstool-ng-1.17.0
+	cd ${BUILD}/${CROSSTOOL_VERSION}
 	./configure --enable-local
 	if [ $? -ne 0 ] ; then
 		die "cannot configure crosstool-ng"
@@ -64,7 +66,7 @@ function build_toolchain()
 		die "cannot install crosstool-ng"
 	fi
 
-	cp ${BASE_PATH}/config/ctng ${BUILD}/crosstool-ng-1.17.0/.config
+	cp ${BASE_PATH}/config/ctng ${BUILD}/${CROSSTOOL_VERSION}/.config
 	if [ $? -ne 0 ] ; then
 		die "cannot copy crosstool-ng configuration"
 	fi
@@ -77,24 +79,43 @@ function build_toolchain()
 
 function build_qemu()
 {
-	# TODO:mk: qemu from which source? bbv patch or forked (submodule) repository?
-
 	prepare_build
 	prepare_prefix
 
-	if [ -d ${BUILD}/qemu-1.3.0 ] ; then
-		rm -fr ${BUILD}/qemu-1.3.0
-		if [ $? -ne 0 ] ; then
-			die "cannot cleanup prior building qemu"
-		fi
-	fi
+	# different preparations for different sources
 
-	tar -xjf ${PACKAGES}/qemu-1.3.0.tar.bz2 -C ${BUILD}
-	if [ $? -ne 0 ] ; then
-		die "cannot unpack qemu sources"
-	fi
+	case $1 in
+		submodule)
+			if [ ! -r ${BASE_PATH}/src/qemu/configure ] ; then
+				die "submodule qemu not present (update/pull sources)"
+			fi
 
-	cd ${BUILD}/qemu-1.3.0
+			cd ${BASE_PATH}/src/qemu
+			;;
+
+		tarball)
+			if [ -d ${BUILD}/qemu-1.3.0 ] ; then
+				rm -fr ${BUILD}/qemu-1.3.0
+				if [ $? -ne 0 ] ; then
+					die "cannot cleanup prior building qemu"
+				fi
+			fi
+
+			tar -xjf ${PACKAGES}/qemu-1.3.0.tar.bz2 -C ${BUILD}
+			if [ $? -ne 0 ] ; then
+				die "cannot unpack qemu sources"
+			fi
+
+			cd ${BUILD}/qemu-1.3.0
+			;;
+
+		*)
+			die "no source of qemu specified, possible values: submodule, tarball"
+			;;
+	esac
+
+	# now build
+
 	./configure --prefix=${PREFIX} --target-list=arm-linux-user,arm-softmmu
 	if [ $? -ne 0 ] ; then
 		die "configuration of qemu failed"
@@ -113,29 +134,29 @@ function build_qemu()
 
 function build_kernel()
 {
+	export LINUX_VERSION=linux-2.6.38
+
 	prepare_build
 	prepare_prefix
 
-	export PATH=${CROSS_COMPILER_PATH}:${PATH}
-
-	if [ -d ${BUILD}/linux-2.6.38 ] ; then
-		rm -fr ${BUILD}/linux-2.6.38
+	if [ -d ${BUILD}/${LINUX_VERSION} ] ; then
+		rm -fr ${BUILD}/${LINUX_VERSION}
 		if [ $? -ne 0 ] ; then
 			die "cannot cleanup prior building linux"
 		fi
 	fi
 
-	tar -xjf ${PACKAGES}/linux-2.6.38.tar.bz2 -C ${BUILD}
+	tar -xjf ${PACKAGES}/${LINUX_VERSION}.tar.bz2 -C ${BUILD}
 	if [ $? -ne 0 ] ; then
 		die "cannot unpack linux sources"
 	fi
 
-	cp ${BASE_PATH}/config/kernel-$1 ${BUILD}/linux-2.6.38/.config
+	cp ${BASE_PATH}/config/kernel-$1 ${BUILD}/${LINUX_VERSION}/.config
 	if [ $? -ne 0 ] ; then
 		die "cannot copy kernel configuration"
 	fi
 
-	cd ${BUILD}/linux-2.6.38
+	cd ${BUILD}/${LINUX_VERSION}
 	make all
 	if [ $? -ne 0 ] ; then
 		die "cannot build kernel"
@@ -149,22 +170,24 @@ function build_kernel()
 
 function build_busybox()
 {
+	export BUSYBOX_VERSION=busybox-1.20.2
+
 	prepare_build
 	prepare_prefix
 
-	if [ -d ${BUILD}/busybox-1.20.2 ] ; then
-		rm -fr ${BUILD}/busybox-1.20.2
+	if [ -d ${BUILD}/${BUSYBOX_VERSION} ] ; then
+		rm -fr ${BUILD}/${BUSYBOX_VERSION}
 		if [ $? -ne 0 ] ; then
 			die "cannot cleanup prior building busybox"
 		fi
 	fi
 
-	tar -xjf ${PACKAGES}/busybox-1.20.2.tar.bz2 -C ${BUILD}
+	tar -xjf ${PACKAGES}/${BUSYBOX_VERSION}.tar.bz2 -C ${BUILD}
 	if [ $? -ne 0 ] ; then
 		die "cannot unpack busybox sources"
 	fi
 
-	cd ${BUILD}/busybox-1.20.2
+	cd ${BUILD}/${BUSYBOX_VERSION}
 	make defconfig
 	if [ $? -ne 0 ] ; then
 		die "cannot configure busybox"
@@ -176,10 +199,33 @@ function build_busybox()
 	fi
 }
 
+function build_index()
+{
+	rm -f tags cscope.files cscope.out
+
+	if [ -d rootfs ] ; then
+		find rootfs -name "*.c" -o -name "*.h" >> cscope.files
+	fi
+	if [ -d src ] ; then
+		find src -name "*.c" -o -name "*.h" >> cscope.files
+	fi
+
+	ctags -L cscope.files
+	cscope -b
+}
+
 function cleanup()
 {
+	rm -f tags cscope.files cscope.out
+
 	if [ -d ${PREFIX}/x-tools ] ; then
 		chmod -R u+w ${PREFIX}/x-tools
+	fi
+
+	if [ -d ${BASE_PATH}/src/qemu ] ; then
+		if [ -r ${BASE_PATH}/src/qemu/Makefile ] ; then
+			(cd ${BASE_PATH}/src/qemu ; make distclean)
+		fi
 	fi
 
 	rm -fr ${PREFIX}
@@ -199,10 +245,12 @@ if [ $# -eq 0 ] ; then
 	echo ""
 	echo "Commands:"
 	echo "  clean                : cleans up build and local deployment directories"
+	echo "  index                : builds ctags/cscope indices"
 	echo "  all                  : only for convenience, contains toolchain, qemu, busybox, kernel-*"
 	echo "  toolchain            : extracts the toolchain (x86 based)"
 	echo "  toolchain-scratch    : builds toolchain from scratch"
-	echo "  qemu                 : builds standard qemu from source"
+	echo "  qemu                 : builds standard qemu from submodule"
+	echo "  qemu-tarball         : builds standard qemu from source tarball"
 	echo "  busybox              : builds busyboard"
 	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
 	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
@@ -217,7 +265,7 @@ case $1 in
 
 	all)
 		unpack_toolchain
-		build_qemu
+		build_qemu "submodule"
 		build_busybox
 		build_kernel "versatile"
 		build_kernel "versatile-bbv"
@@ -232,7 +280,11 @@ case $1 in
 		;;
 
 	qemu)
-		build_qemu
+		build_qemu "submodule"
+		;;
+
+	qemu-tarball)
+		build_qemu "tarball"
 		;;
 
 	busybox)
@@ -245,6 +297,10 @@ case $1 in
 
 	kernel-versatile-bbv)
 		build_kernel "versatile-bbv"
+		;;
+
+	index)
+		build_index
 		;;
 
 	*)
