@@ -116,7 +116,10 @@ function build_qemu()
 
 	# now build
 
-	./configure --prefix=${PREFIX} --target-list=arm-linux-user,arm-softmmu
+	./configure \
+		--prefix=${PREFIX} \
+		--target-list=arm-linux-user,arm-softmmu \
+		--with-lua=${PREFIX}
 	if [ $? -ne 0 ] ; then
 		die "configuration of qemu failed"
 	fi
