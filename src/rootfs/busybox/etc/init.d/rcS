@@ -13,3 +13,8 @@ mount -t sysfs none /sys
 #/sbin/ifconfig lo up
 #/sbin/ifconfig eth0 192.168.1.11
 
+for i in 1 2 3 4 ; do
+	echo $i  > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio$i/direction
+done
+
