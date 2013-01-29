@@ -7,6 +7,7 @@ function gpio_set(id, val)
 end
 
 function gpio_get(id)
+	print("gpio " .. id .. " get")
 	return 0
 end
 
