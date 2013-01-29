@@ -199,6 +199,39 @@ function build_busybox()
 	fi
 }
 
+function build_lua()
+{
+	export LUA_VERSION=lua-5.2.1
+
+	prepare_build
+	prepare_prefix
+
+	if [ -d ${BUILD}/${LUA_VERSION} ] ; then
+		rm -fr ${BUILD}/${LUA_VERSION}
+		if [ $? -ne 0 ] ; then
+			die "cannot cleanup prior building Lua"
+		fi
+	fi
+
+	tar -xzf ${PACKAGES}/${LUA_VERSION}.tar.gz -C ${BUILD}
+	if [ $? -ne 0 ] ; then
+		die "cannot unpack Lua sources"
+	fi
+
+	sed -i 's/^INSTALL_TOP.*$/INSTALL_TOP=\$(PREFIX)/' ${BUILD}/${LUA_VERSION}/Makefile
+
+	cd ${BUILD}/${LUA_VERSION}
+	make generic
+	if [ $? -ne 0 ] ; then
+		die "cannot build Lua"
+	fi
+
+	make install
+	if [ $? -ne 0 ] ; then
+		die "cannot install Lua"
+	fi
+}
+
 function build_index()
 {
 	rm -f tags cscope.files cscope.out
@@ -279,9 +312,10 @@ function print_usage()
 	echo "Commands:"
 	echo "  clean                : cleans up build and local deployment directories"
 	echo "  index                : builds ctags/cscope indices"
-	echo "  all                  : only for convenience, contains toolchain, qemu, busybox, kernel-*"
+	echo "  all                  : only for convenience, builds (in this order): toolchain, lua, qemu, busybox, kernel-*"
 	echo "  toolchain            : extracts the toolchain (x86 based)"
 	echo "  toolchain-scratch    : builds toolchain from scratch"
+	echo "  lua                  : builds Lua"
 	echo "  qemu                 : builds standard qemu from submodule"
 	echo "  qemu-tarball         : builds standard qemu from source tarball"
 	echo "  busybox              : builds busyboard"
@@ -304,6 +338,7 @@ case $1 in
 
 	all)
 		unpack_toolchain
+		build_lua
 		build_qemu "submodule"
 		build_busybox
 		build_kernel "versatile"
@@ -316,6 +351,10 @@ case $1 in
 
 	toolchain-scratch)
 		build_toolchain
+		;;
+
+	lua)
+		build_lua
 		;;
 
 	qemu)

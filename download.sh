@@ -5,6 +5,7 @@ PACKS_BASE=(
 	http://www.busybox.net/downloads/busybox-1.20.1.tar.bz2
 	http://www.crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.17.0.tar.bz2
 	http://wiki.qemu-project.org/download/qemu-1.3.0.tar.bz2
+	http://www.lua.org/ftp/lua-5.2.1.tar.gz
 )
 
 PACKS_TOOLCHAIN=(
@@ -66,12 +67,12 @@ function show_info()
 	echo ""
 	echo "Base Packages:"
 	for pack in ${PACKS_BASE[*]} ; do
-		echo "  $(basename ${pack})"
+		printf "  %-40s  (%s)\n" "$(basename ${pack})" "${pack}"
 	done
 	echo ""
 	echo "Toolchain Packages:"
 	for pack in ${PACKS_TOOLCHAIN[*]} ; do
-		echo "  $(basename ${pack})"
+		printf "  %-40s  (%s)\n" "$(basename ${pack})" "${pack}"
 	done
 	echo ""
 }
