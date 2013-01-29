@@ -211,6 +211,41 @@ function build_index()
 	cscope -b
 }
 
+function build_demo()
+{
+	export CC=${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc
+	export STRIP=${CROSS_COMPILER_PATH}/${CROSS_COMPILE}strip
+
+	case $1 in
+		clean)
+			make -C src/rootfs/cpio clean
+			make -C src/rootfs/ext2 clean
+			make -C src/rootfs/ext2-2 clean
+			make -C src/rootfs/busybox clean
+			;;
+
+		cpio)
+			make -C src/rootfs/$1
+			;;
+
+		ext2)
+			make -C src/rootfs/$1
+			;;
+
+		ext2-2)
+			make -C src/rootfs/$1
+			;;
+
+		busybox)
+			make -C src/rootfs/$1
+			;;
+
+		*)
+			die "unknown target $1"
+			;;
+	esac
+}
+
 function cleanup()
 {
 	rm -f tags cscope.files cscope.out
@@ -236,7 +271,8 @@ function cleanup()
 	fi
 }
 
-if [ $# -eq 0 ] ; then
+function print_usage()
+{
 	echo ""
 	echo "usage: $(basename $0) command"
 	echo ""
@@ -251,7 +287,13 @@ if [ $# -eq 0 ] ; then
 	echo "  busybox              : builds busyboard"
 	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
 	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
+	echo "  demo [demo]          : builds a demo"
 	echo ""
+}
+
+
+if [ $# -eq 0 ] ; then
+	print_usage $0
 	exit 1
 fi
 
@@ -294,6 +336,14 @@ case $1 in
 
 	kernel-versatile-bbv)
 		build_kernel "versatile-bbv"
+		;;
+
+	demo)
+		if [ $# -ne 2 ] ; then
+			print_usage $0
+			die "invalid demo"
+		fi
+		build_demo $2
 		;;
 
 	index)

@@ -9,6 +9,10 @@
 
 export CONFIG_PREFIX=$(CURDIR)/mnt
 
+ifeq ($(shell which arm-linux-gcc),)
+  $(error Cross toolchain not in path)
+endif
+
 all :
 	$(MAKE) ramdisk-create
 	$(MAKE) ramdisk-mount

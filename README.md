@@ -90,7 +90,7 @@ The toolbox can also be used to start the demos. After building all necessary pa
 you may build and start the examples:
 
 ```bash
-qtb.sh make ext2
+qtb.sh build demo ext2
 ```
 Then start the example:
 ```bash
