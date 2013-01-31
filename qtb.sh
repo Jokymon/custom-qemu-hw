@@ -2,6 +2,7 @@
 
 export SCRIPT_PATH=$(dirname $(readlink -f $0))
 export BASE_PATH=${BASE_PATH:-${SCRIPT_PATH}}
+export SRC_PATH=${SRC_PATH:-${BASE_PATH}/src}
 export PACKAGES=${PACKAGES:-${SCRIPT_PATH}/../pkg}
 export PACKAGES_TOOLCHAIN=${PACKAGES_TOOLCHAIN:-${PACKAGES}/toolchain}
 export PREFIX=${PREFIX:-${SCRIPT_PATH}/local}
@@ -49,6 +50,7 @@ function show_info()
 	echo ""
 	echo -n "SCRIPT_PATH           "; show_dir_exists ${SCRIPT_PATH}        ; echo " = ${SCRIPT_PATH}"
 	echo -n "BASE_PATH             "; show_dir_exists ${BASE_PATH}          ; echo " = ${BASE_PATH}"
+	echo -n "SRC_PATH              "; show_dir_exists ${SRC_PATH}           ; echo " = ${SRC_PATH}"
 	echo -n "PACKAGES              "; show_dir_exists ${PACKAGES}           ; echo " = ${PACKAGES}"
 	echo -n "PACKAGES_TOOLCHAIN    "; show_dir_exists ${PACKAGES_TOOLCHAIN} ; echo " = ${PACKAGES_TOOLCHAIN}"
 	echo -n "PREFIX                "; show_dir_exists ${PREFIX}             ; echo " = ${PREFIX}"

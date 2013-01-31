@@ -116,7 +116,10 @@ function build_qemu()
 
 	# now build
 
-	./configure --prefix=${PREFIX} --target-list=arm-linux-user,arm-softmmu
+	./configure \
+		--prefix=${PREFIX} \
+		--target-list=arm-linux-user,arm-softmmu \
+		--with-lua=${PREFIX}
 	if [ $? -ne 0 ] ; then
 		die "configuration of qemu failed"
 	fi
@@ -199,19 +202,104 @@ function build_busybox()
 	fi
 }
 
+function build_lua()
+{
+	export LUA_VERSION=lua-5.2.1
+
+	prepare_build
+	prepare_prefix
+
+	if [ -d ${BUILD}/${LUA_VERSION} ] ; then
+		rm -fr ${BUILD}/${LUA_VERSION}
+		if [ $? -ne 0 ] ; then
+			die "cannot cleanup prior building Lua"
+		fi
+	fi
+
+	tar -xzf ${PACKAGES}/${LUA_VERSION}.tar.gz -C ${BUILD}
+	if [ $? -ne 0 ] ; then
+		die "cannot unpack Lua sources"
+	fi
+
+	sed -i 's/^INSTALL_TOP.*$/INSTALL_TOP=\$(PREFIX)/' ${BUILD}/${LUA_VERSION}/Makefile
+
+	cd ${BUILD}/${LUA_VERSION}
+	make generic
+	if [ $? -ne 0 ] ; then
+		die "cannot build Lua"
+	fi
+
+	make install
+	if [ $? -ne 0 ] ; then
+		die "cannot install Lua"
+	fi
+}
+
 function build_index()
 {
 	rm -f tags cscope.files cscope.out
 
-	if [ -d rootfs ] ; then
-		find rootfs -name "*.c" -o -name "*.h" >> cscope.files
-	fi
 	if [ -d src ] ; then
 		find src -name "*.c" -o -name "*.h" >> cscope.files
 	fi
 
 	ctags -L cscope.files
 	cscope -b
+}
+
+function build_demo()
+{
+	export CC=${CROSS_COMPILER_PATH}/${CROSS_COMPILE}gcc
+	export STRIP=${CROSS_COMPILER_PATH}/${CROSS_COMPILE}strip
+
+	case $1 in
+		clean)
+			make -C src/rootfs/cpio clean
+			make -C src/rootfs/ext2 clean
+			make -C src/rootfs/ext2-2 clean
+			make -C src/rootfs/busybox clean
+			;;
+
+		cpio)
+			make -C src/rootfs/$1
+			;;
+
+		ext2)
+			make -C src/rootfs/$1
+			;;
+
+		ext2-2)
+			make -C src/rootfs/$1
+			;;
+
+		busybox)
+			make -C src/rootfs/$1
+			;;
+
+		*)
+			die "unknown target $1"
+			;;
+	esac
+}
+
+function build_host()
+{
+	export CC=gcc
+	export STRIP=strip
+
+	case $1 in
+		all)
+			make -C src/host
+			;;
+
+		clean)
+			make -C src/host clean
+			;;
+
+		*)
+			die "unknown target $1"
+			;;
+	esac
 }
 
 function cleanup()
@@ -239,22 +327,31 @@ function cleanup()
 	fi
 }
 
-if [ $# -eq 0 ] ; then
+function print_usage()
+{
 	echo ""
 	echo "usage: $(basename $0) command"
 	echo ""
 	echo "Commands:"
 	echo "  clean                : cleans up build and local deployment directories"
 	echo "  index                : builds ctags/cscope indices"
-	echo "  all                  : only for convenience, contains toolchain, qemu, busybox, kernel-*"
+	echo "  all                  : only for convenience, builds (in this order): toolchain, lua, qemu, busybox, kernel-*"
 	echo "  toolchain            : extracts the toolchain (x86 based)"
 	echo "  toolchain-scratch    : builds toolchain from scratch"
+	echo "  lua                  : builds Lua"
 	echo "  qemu                 : builds standard qemu from submodule"
 	echo "  qemu-tarball         : builds standard qemu from source tarball"
 	echo "  busybox              : builds busyboard"
 	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
 	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
+	echo "  demo [demo]          : builds a demo"
+	echo "  host [target]        : builds all host tools"
 	echo ""
+}
+
+
+if [ $# -eq 0 ] ; then
+	print_usage $0
 	exit 1
 fi
 
@@ -265,6 +362,7 @@ case $1 in
 
 	all)
 		unpack_toolchain
+		build_lua
 		build_qemu "submodule"
 		build_busybox
 		build_kernel "versatile"
@@ -277,6 +375,10 @@ case $1 in
 
 	toolchain-scratch)
 		build_toolchain
+		;;
+
+	lua)
+		build_lua
 		;;
 
 	qemu)
@@ -297,6 +399,22 @@ case $1 in
 
 	kernel-versatile-bbv)
 		build_kernel "versatile-bbv"
+		;;
+
+	demo)
+		if [ $# -ne 2 ] ; then
+			print_usage $0
+			die "invalid demo"
+		fi
+		build_demo $2
+		;;
+
+	host)
+		if [ $# -ne 2 ] ; then
+			print_usage $0
+			die "invalid host"
+		fi
+		build_host $2
 		;;
 
 	index)
