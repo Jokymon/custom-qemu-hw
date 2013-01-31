@@ -282,6 +282,26 @@ function build_demo()
 	esac
 }
 
+function build_host()
+{
+	export CC=gcc
+	export STRIP=strip
+
+	case $1 in
+		all)
+			make -C src/host
+			;;
+
+		clean)
+			make -C src/host clean
+			;;
+
+		*)
+			die "unknown target $1"
+			;;
+	esac
+}
+
 function cleanup()
 {
 	rm -f tags cscope.files cscope.out
@@ -325,6 +345,7 @@ function print_usage()
 	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
 	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
 	echo "  demo [demo]          : builds a demo"
+	echo "  host [target]        : builds all host tools"
 	echo ""
 }
 
@@ -386,6 +407,14 @@ case $1 in
 			die "invalid demo"
 		fi
 		build_demo $2
+		;;
+
+	host)
+		if [ $# -ne 2 ] ; then
+			print_usage $0
+			die "invalid host"
+		fi
+		build_host $2
 		;;
 
 	index)

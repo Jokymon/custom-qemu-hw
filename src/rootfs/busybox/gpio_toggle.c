@@ -5,13 +5,22 @@
 #include <fcntl.h>
 #include <stdint.h>
 
-int main()
+int main(int argc, char ** argv)
 {
 	int fd = -1;
 	int rc = -1;
 	int state = 0;
+	char device[128];
 
-	fd = open("/sys/class/gpio/gpio0/value", O_RDWR);
+	static const char * DEVICE_FMT = "/sys/class/gpio/gpio%s/value";
+
+	if (argc == 2) {
+		snprintf(device, sizeof(device), DEVICE_FMT, argv[1]);
+	} else {
+		snprintf(device, sizeof(device), DEVICE_FMT, "0");
+	}
+
+	fd = open(device, O_RDWR);
 	if (fd < 0) {
 		perror("open");
 		return EXIT_FAILURE;
