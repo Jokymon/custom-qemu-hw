@@ -6,6 +6,7 @@
 .PHONY: ramdisk-create
 .PHONY: ramdisk-mount
 .PHONY: ramdisk-umount
+.PHONY: app-install
 
 export CONFIG_PREFIX=$(CURDIR)/mnt
 
@@ -13,14 +14,18 @@ ifeq ($(shell which arm-linux-gcc),)
   $(error Cross toolchain not in path)
 endif
 
-all :
+all : gpio_toggle
 	$(MAKE) ramdisk-create
 	$(MAKE) ramdisk-mount
 	$(MAKE) rootfs-init
 	$(MAKE) busybox-install
 	$(MAKE) -C modules
 	$(MAKE) modules-install
+	$(MAKE) app-install
 	$(MAKE) ramdisk-umount
+
+gpio_toggle : gpio_toggle.o
+	$(CC) -o $@ $^
 
 rootfs-init :
 	(cd mnt \
@@ -48,6 +53,10 @@ busybox-install :
 modules-install :
 	sudo cp modules/simple_km.ko $(CONFIG_PREFIX)/lib/modules/2.6.38qemu
 
+app-install :
+	sudo mkdir -p mnt/usr/local/bin \
+		&& sudo cp gpio_toggle mnt/usr/local/bin/
+
 ramdisk-mount :
 	mkdir -p mnt
 	sudo mount -o loop ramdisk mnt
@@ -65,5 +74,10 @@ ramdisk-create :
 clean :
 	rm -f ramdisk*
 	rm -fr mnt
+	rm -f *.o
+	rm -f gpio_toggle
 	$(MAKE) -C modules clean
+
+%.o : %.c
+	$(CC) -o $@ -c $< $(CFLAGS)
 
