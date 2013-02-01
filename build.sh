@@ -304,6 +304,9 @@ function build_host()
 
 function cleanup()
 {
+	build_host clean
+	build_demo clean
+
 	rm -f tags cscope.files cscope.out
 
 	if [ -d ${PREFIX}/x-tools ] ; then
