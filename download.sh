@@ -2,7 +2,7 @@
 
 PACKS_BASE=(
 	http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.38.tar.bz2
-	http://www.busybox.net/downloads/busybox-1.20.1.tar.bz2
+	http://www.busybox.net/downloads/busybox-1.20.2.tar.bz2
 	http://www.crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.17.0.tar.bz2
 	http://wiki.qemu-project.org/download/qemu-1.3.0.tar.bz2
 	http://www.lua.org/ftp/lua-5.2.1.tar.gz
