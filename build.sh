@@ -128,7 +128,7 @@ function build_qemu()
 	if [ $? -ne 0 ] ; then
 		die "build of qemu failed"
 	fi
-
+exit 0
 	make install
 	if [ $? -ne 0 ] ; then
 		die "installation of qemu failed"
@@ -222,9 +222,10 @@ function build_lua()
 	fi
 
 	sed -i 's/^INSTALL_TOP.*$/INSTALL_TOP=\$(PREFIX)/' ${BUILD}/${LUA_VERSION}/Makefile
+	sed -i 's/^MYCFLAGS=.*$/MYCFLAGS=-fPIC/' ${BUILD}/${LUA_VERSION}/src/Makefile
 
 	cd ${BUILD}/${LUA_VERSION}
-	make generic
+	make linux
 	if [ $? -ne 0 ] ; then
 		die "cannot build Lua"
 	fi
