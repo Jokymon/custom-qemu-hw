@@ -32,7 +32,7 @@ function unpack_toolchain()
 {
 	prepare_prefix
 
-	tar -xjf ${PACKAGES}/x-tools.tar.bz2 -C ${PREFIX}
+	tar -xjf ${PACKAGES}/x-tools$1.tar.bz2 -C ${PREFIX}
 	if [ $? -ne 0 ] ; then
 		die "cannot unpack toolchain"
 	fi
@@ -339,7 +339,8 @@ function print_usage()
 	echo "  clean                : cleans up build and local deployment directories"
 	echo "  index                : builds ctags/cscope indices"
 	echo "  all                  : only for convenience, builds (in this order): toolchain, lua, qemu, busybox, kernel-*"
-	echo "  toolchain            : extracts the toolchain (x86 based)"
+	echo "  toolchain            : extracts the toolchain (x86 based, name: x-tools.tar.bz2)"
+	echo "  toolchain-64         : extracts the toolchain (64bit based, name: x-tools-64.tar.bz2)"
 	echo "  toolchain-scratch    : builds toolchain from scratch"
 	echo "  lua                  : builds Lua"
 	echo "  qemu                 : builds standard qemu from submodule"
@@ -374,6 +375,10 @@ case $1 in
 
 	toolchain)
 		unpack_toolchain
+		;;
+
+	toolchain-64)
+		unpack_toolchain "-64"
 		;;
 
 	toolchain-scratch)
