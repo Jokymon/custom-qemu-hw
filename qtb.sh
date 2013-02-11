@@ -84,7 +84,6 @@ if [ $# -eq 0 ] ; then
 	echo "  download command : download of packages"
 	echo "  build command    : invokes a build with specified command"
 	echo "  start command    : starts the qemu with specified command"
-	echo "  make target      : builds one of the targets using the built environment"
 	echo ""
 	exit 1
 fi
@@ -113,12 +112,6 @@ case $1 in
 	start)
 		shift
 		${SCRIPT_PATH}/start.sh $*
-		;;
-
-	make)
-		shift
-		export PATH=$PATH:${CROSS_COMPILER_PATH}
-		make $*
 		;;
 
 	*)
