@@ -130,3 +130,21 @@ LINKS
 - ARM/PrimeCell Documentation : http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0194g/index.html
 
 
+PACKAGES
+========
+
+The following packages have to be installed in order to build the toolchain (using crosstool-NG):
+- bison
+- flex
+- gperf
+- texinfo
+- libtool
+- automake
+- libncurses (dev)
+- ctags
+- cscope
+- libsdl1.2  (dev)
+- readline   (dev)
+
+
+
