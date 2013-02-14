@@ -30,9 +30,31 @@ function prepare_prefix()
 
 function unpack_toolchain()
 {
+	if [ "$1" == "guess" ] ; then
+		case `uname -m` in
+			"x86")
+				toolchain="32"
+				;;
+			"x86_64")
+				toolchain="64"
+				;;
+			*)
+				toolchain="unknown"
+				;;
+		esac
+	fi
+
+	case ${toolchain} in
+		"32") ;;
+		"64") ;;
+		*)
+			die "unsupported toolchain: ${toolchain}"
+			;;
+	esac
+
 	prepare_prefix
 
-	tar -xjf ${PACKAGES}/x-tools$1.tar.bz2 -C ${PREFIX}
+	tar -xjf ${PACKAGES}/x-tools-${toolchain}.tar.bz2 -C ${PREFIX}
 	if [ $? -ne 0 ] ; then
 		die "cannot unpack toolchain"
 	fi
@@ -128,7 +150,7 @@ function build_qemu()
 	if [ $? -ne 0 ] ; then
 		die "build of qemu failed"
 	fi
-exit 0
+
 	make install
 	if [ $? -ne 0 ] ; then
 		die "installation of qemu failed"
@@ -339,8 +361,9 @@ function print_usage()
 	echo "Commands:"
 	echo "  clean                : cleans up build and local deployment directories"
 	echo "  index                : builds ctags/cscope indices"
-	echo "  all                  : only for convenience, builds (in this order): toolchain, lua, qemu, busybox, kernel-*"
-	echo "  toolchain            : extracts the toolchain (x86 based, name: x-tools.tar.bz2)"
+	echo "  all                  : only for convenience, builds (in this order): toolchain (guessed), lua, qemu, busybox, kernel-*"
+	echo "  toolchain            : extracts the toolchain (tries to guess the right version 32/64 bits)"
+	echo "  toolchain-32         : extracts the toolchain (32bit based, name: x-tools-32.tar.bz2)"
 	echo "  toolchain-64         : extracts the toolchain (64bit based, name: x-tools-64.tar.bz2)"
 	echo "  toolchain-scratch    : builds toolchain from scratch"
 	echo "  lua                  : builds Lua"
@@ -366,7 +389,7 @@ case $1 in
 		;;
 
 	all)
-		unpack_toolchain
+		unpack_toolchain "guess"
 		build_lua
 		build_qemu "submodule"
 		build_busybox
@@ -375,11 +398,15 @@ case $1 in
 		;;
 
 	toolchain)
-		unpack_toolchain
+		unpack_toolchain "guess"
+		;;
+
+	toolchain-32)
+		unpack_toolchain "32"
 		;;
 
 	toolchain-64)
-		unpack_toolchain "-64"
+		unpack_toolchain "64"
 		;;
 
 	toolchain-scratch)
