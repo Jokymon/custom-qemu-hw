@@ -88,12 +88,19 @@ int main()
 	int rc;
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len;
+	int tmp;
 
 	memset(&state, 0, sizeof(state));
 
 	sock = socket(AF_INET, SOCK_STREAM , 0);
 	if (sock < 0) {
 		perror("socket");
+		return EXIT_FAILURE;
+	}
+
+	tmp = 1;
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(tmp)) < 0) {
+		perror("setsockopt");
 		return EXIT_FAILURE;
 	}
 
