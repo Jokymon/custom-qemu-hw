@@ -315,8 +315,13 @@ function build_host()
 			make -C src/host
 			;;
 
+		qtgui)
+			(cd src/gui/gpio ; qmake gpio.pro && make)
+			;;
+
 		clean)
 			make -C src/host clean
+			(cd src/gui/gpio ; make distclean)
 			;;
 
 		*)
@@ -373,7 +378,10 @@ function print_usage()
 	echo "  kernel-versatile     : builds Linux kernel for the versatile board"
 	echo "  kernel-versatile-bbv : builds Linux kernel for the versatile bbv custom board"
 	echo "  demo [demo]          : builds a demo"
-	echo "  host [target]        : builds all host tools"
+	echo "  host [target]        : builds all host tools, possible values: all qtgui clean"
+	echo "                         in order to build the Qt GUI, the environment variable QT_BIN must be set, example:"
+	echo "                           $ export QT_BIN=/home/user/.../bin/"
+	echo "                           $ ./qtb.sh build host qtgui"
 	echo ""
 }
 

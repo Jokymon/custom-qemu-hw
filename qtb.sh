@@ -72,6 +72,9 @@ function show_info()
 	echo ""
 	echo "PATH                      = ${PATH}"
 	echo ""
+	echo -n "QT_BIN                "; show_dir_exists ${QT_BIN}   ; echo " = ${QT_BIN}"
+	echo -n "qmake                 "; show_exe_exists ${QT_BIN}/qmake
+	echo ""
 }
 
 if [ $# -eq 0 ] ; then
