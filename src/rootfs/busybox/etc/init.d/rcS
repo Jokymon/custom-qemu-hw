@@ -19,11 +19,11 @@ mount -t sysfs none /sys
 #/usr/sbin/telnetd
 
 # define GPIOs
-for i in 0 1 2 3 8 9 10 11 16 17 18 19 ; do
+for i in 0 1 2 3 8 9 10 11 16 17 18 19 24 25 26 27 ; do
 	echo $i  > /sys/class/gpio/export
 	echo out > /sys/class/gpio/gpio$i/direction
 done
-for i in 4 5 6 7 12 13 14 15 20 21 22 23 ; do
+for i in 4 5 6 7 12 13 14 15 20 21 22 23 28 29 30 31 ; do
 	echo $i > /sys/class/gpio/export
 	echo in > /sys/class/gpio/gpio$i/direction
 done

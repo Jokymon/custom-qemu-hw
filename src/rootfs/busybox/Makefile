@@ -14,7 +14,7 @@ ifeq ($(shell which arm-linux-gcc),)
   $(error Cross toolchain not in path)
 endif
 
-all : gpio_toggle
+all : gpio_toggle gpio_listen
 	$(MAKE) ramdisk-create
 	$(MAKE) ramdisk-mount
 	$(MAKE) rootfs-init
@@ -25,6 +25,9 @@ all : gpio_toggle
 	$(MAKE) ramdisk-umount
 
 gpio_toggle : gpio_toggle.o
+	$(CC) -o $@ $^
+
+gpio_listen : gpio_listen.o
 	$(CC) -o $@ $^
 
 rootfs-init :
@@ -55,7 +58,8 @@ modules-install :
 
 app-install :
 	sudo mkdir -p mnt/usr/local/bin \
-		&& sudo cp gpio_toggle mnt/usr/local/bin/
+		&& sudo cp gpio_toggle mnt/usr/local/bin/ \
+		&& sudo cp gpio_listen mnt/usr/local/bin/
 
 ramdisk-mount :
 	mkdir -p mnt
@@ -76,6 +80,7 @@ clean :
 	rm -fr mnt
 	rm -f *.o
 	rm -f gpio_toggle
+	rm -f gpio_listen
 	$(MAKE) -C modules clean
 
 %.o : %.c
