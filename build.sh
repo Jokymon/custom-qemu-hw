@@ -316,7 +316,7 @@ function build_host()
 			;;
 
 		qtgui)
-			(cd src/gui/gpio ; qmake gpio.pro && make)
+			(cd src/gui/gpio ; ${QT_BIN}/qmake gpio.pro && make)
 			;;
 
 		clean)
