@@ -26,6 +26,9 @@ public slots:
     void on_disconnected();
 
 private:
+    void update_checkboxes(uint8_t value);
+
+private:
     Ui::MainWindow *ui;
     QTcpServer * tcpserver;
     QTcpSocket * tcpclient;

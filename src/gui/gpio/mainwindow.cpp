@@ -86,6 +86,7 @@ void MainWindow::on_clientread()
     switch (msg.cmd) {
         case CMD_WRITE:
             ui->label_gpios->setText(QString("0x%1").arg(msg.data, 2, 16));
+            update_checkboxes(msg.data);
             break;
 
         default:
@@ -96,4 +97,56 @@ void MainWindow::on_clientread()
 void MainWindow::on_disconnected()
 {
     ui->label_status->setText(QString("disconnected"));
+}
+
+void MainWindow::update_checkboxes(uint8_t value)
+{
+    if (value & 0x80) {
+        ui->chk128->setChecked(true);
+    } else {
+        ui->chk128->setChecked(false);
+    }
+
+    if (value & 0x40) {
+        ui->chk64->setChecked(true);
+    } else {
+        ui->chk64->setChecked(false);
+    }
+
+    if (value & 0x20) {
+        ui->chk32->setChecked(true);
+    } else {
+        ui->chk32->setChecked(false);
+    }
+
+    if (value & 0x10) {
+        ui->chk16->setChecked(true);
+    } else {
+        ui->chk16->setChecked(false);
+    }
+
+    if (value & 0x08) {
+        ui->chk8->setChecked(true);
+    } else {
+        ui->chk8->setChecked(false);
+    }
+
+    if (value & 0x04) {
+        ui->chk4->setChecked(true);
+    } else {
+        ui->chk4->setChecked(false);
+    }
+
+    if (value & 0x02) {
+        ui->chk2->setChecked(true);
+    } else {
+        ui->chk2->setChecked(false);
+    }
+
+    if (value & 0x01) {
+        ui->chk1->setChecked(true);
+    } else {
+        ui->chk1->setChecked(false);
+    }
+
 }
