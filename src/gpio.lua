@@ -3,11 +3,11 @@
 -- to be used by the special GPIO device 'pl061bbv'.
 
 function gpio_set(id, val)
-	print("gpio " .. id .. " set to " .. val)
+	print("Inside LUA: gpio " .. id .. " set to " .. val)
 end
 
 function gpio_get(id)
-	print("gpio " .. id .. " get")
+	print("Inside LUA: gpio " .. id .. " get")
 	return 0
 end
 
